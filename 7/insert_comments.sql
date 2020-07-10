@@ -1,0 +1,1 @@
+insert into nodejs.comments (commenter, comment) values (1, '안녕하세요, zero의 댓글입니다.');
