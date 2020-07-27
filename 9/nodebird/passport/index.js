@@ -38,9 +38,22 @@ module.exports = (passport) => {
      * 세션에 저장한 아이디를 통해 사용자 정보 객체를 불러옴
      * 위에서 세션에 저장한 id를 받아 DB에서 사용자 정보를 조회
      * 조회한 정보는 req.user에 저장하므로, 앞으로 사용자 정보는 req.user를 통해 조회
+     * 
+     * + 팔로잉, 팔로워 관계가 생겼으므로 해당하는 부분의 목록을 같이 조회
      */
     passport.deserializeUser((id, done) => {
-        User.findOne({ where: { id } })
+        User.findOne({ 
+            where: { id },
+            include: [{
+                model: User,
+                attributes: ['id', 'nick'], // attributes를 지정해서 가져오는 이유는, 실수로 비밀번호흫 조회하지 않도록 방지
+                as: 'Followers',
+            }, {
+                model: User,
+                attributes: ['id', 'nick'],
+                as: 'Followings'
+            }], 
+        })
             .then(user => done(null, user /* <- req.user에 저장 */)) 
             .catch(err => done(err));
     });
